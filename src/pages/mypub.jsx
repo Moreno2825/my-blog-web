@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from "react";
-import GetAllPubUseCase from "@/application/usecases/pubUseCase/GetAllPubUseCase";
-import { Grid, GridContainer } from "../styles/index.style";
+
+import GetOneUserUseCase from "@/application/usecases/pubUseCase/GetOnePubUseCase";
+import CustomButton from "@/components/CustomButton";
 import RecipeReviewCard from "@/components/CustomCard";
 import PubRepo from "@/infraestructure/implementation/httpRequest/axios/PubRepo";
-import CustomButton from "@/components/CustomButton";
+import { Grid, GridContainer } from "@/styles/index.style";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
-export default function Home() {
+export default function Mypub() {
   const [pubs, setPubs] = useState([]);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const userId = useSelector((state) => state.user._id);
 
   const pubRepo = new PubRepo();
-  const getAllOrderUseCase = new GetAllPubUseCase(pubRepo);
+  const getAllOrderUseCase = new GetOneUserUseCase(pubRepo);
 
   const fetchPub = async () => {
     try {
-      const pubData = await getAllOrderUseCase.run();
+      const pubData = await getAllOrderUseCase.run(userId);
       setPubs(pubData.pubs);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
     }
   };
@@ -43,7 +45,7 @@ export default function Home() {
             justifyContent: "space-between",
           }}
         >
-          <h1>Publicaciones de todos los usuarios</h1>
+          <h1>Publicaciones</h1>
           <div>
             <CustomButton
               text={"Publicar"}
@@ -72,6 +74,7 @@ export default function Home() {
                 image={pub.image.secureUrl}
                 expanded={expandedId === pub._id}
                 onExpandClick={handleExpandClick}
+                isMyPub={true}
               />
             ))}
           </Grid>
