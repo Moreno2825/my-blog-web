@@ -17,9 +17,10 @@ import Link from "next/link";
 const pages = [
   { name: "Publicaciones", href: "/" },
   { name: "Mis Publicaciones", href: "/mypub" },
-  
 ];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = [
+  { name: "Cerrar Sesión", href: "/login" },
+];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -54,7 +55,6 @@ function ResponsiveAppBar() {
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
@@ -115,7 +115,6 @@ function ResponsiveAppBar() {
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
               color: "inherit",
@@ -160,9 +159,11 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
+                <Link href={setting.href} passHref key={setting.name}>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting.name}</Typography>
+                  </MenuItem>
+                </Link>
               ))}
             </Menu>
           </Box>

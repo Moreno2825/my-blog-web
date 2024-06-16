@@ -2,6 +2,7 @@ import CreatePubUseCase from "@/application/usecases/pubUseCase/CreatePubUseCase
 import GetOnePubUseCase from "@/application/usecases/pubUseCase/GetOnePubUseCase";
 import GetOneUserUseCase from "@/application/usecases/pubUseCase/GetOneUserUseCase";
 import UpdatePubUseCase from "@/application/usecases/pubUseCase/UpdatePubUseCase";
+import BasicAlerts from "@/components/CustomAlert";
 import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
 import Pub from "@/domain/entities/pub";
@@ -18,6 +19,7 @@ function FormPage() {
   const fileInputRef = useRef(null);
   const [pubs, setPubs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [alertMessage, setAlertMessage] = useState(null);
 
   const pubRepo = new PubRepo();
   const getOne = new GetOneUserUseCase(pubRepo);
@@ -55,9 +57,16 @@ function FormPage() {
         router.refresh();
       } else {
         await updatePubUseCase.run(param.id, pub);
+        setAlertMessage({
+          type: "success",
+          message: "Publicación actualizada exitosamente.",
+        });
       }
     } catch (error) {
-      console.log(error);
+      setAlertMessage({
+        type: "error",
+        message: "Error al procesar la publicación.",
+      });
     }
   };
 
@@ -83,64 +92,82 @@ function FormPage() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "calc(100vh - 7rem/* 112px */)",
-        width: "100%",
-        flexDirection: "column",
-      }}
-    >
-      <form
+    <div>
+      <div
         style={{
           width: "500px",
+          padding: "20px",
+          position: "absolute",
+          top: "0",
+          right: "0",
         }}
-        onSubmit={handleSubmit(onSubmit)}
       >
-        <header style={{ display: "flex", justifyContent: "space-between" }}>
-          <h1>{!param.id ? "Crear publicación" : "Editar publicación"}</h1>
-        </header>
-        <CustomInput
-          label="Titulo: "
-          name="title"
-          control={control}
-          fullWidth
-          labelColor
-          defaultValue={pubs?.title}
-        />
-        <CustomInput
-          label="Contenido: "
-          name="content"
-          control={control}
-          fullWidth
-          labelColor
-        />
-        <input type="file" name="image" ref={fileInputRef} />
+        {alertMessage && (
+          <BasicAlerts
+            severity={alertMessage.type}
+            message={alertMessage.message}
+          />
+        )}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "calc(100vh - 7rem/* 112px */)",
+          width: "100%",
+          flexDirection: "column",
+        }}
+      >
+        <form
+          style={{
+            width: "500px",
+          }}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <header style={{ display: "flex", justifyContent: "space-between" }}>
+            <h1>{!param.id ? "Crear publicación" : "Editar publicación"}</h1>
+          </header>
+          <CustomInput
+            label="Titulo: "
+            name="title"
+            control={control}
+            fullWidth
+            labelColor
+            defaultValue={pubs?.title}
+          />
+          <CustomInput
+            label="Contenido: "
+            name="content"
+            control={control}
+            fullWidth
+            labelColor
+          />
+          <input type="file" name="image" ref={fileInputRef} />
 
-        <div style={{ paddingTop: "20px", display: "flex", gap: "10px" }}>
-          <CustomButton
-            text="Publicar"
-            type="submit"
-            customDesign={{
-              color: "black",
-              backgroundColor: "green",
-              hoverBackgroundColor: "darkgreen",
-            }}
-          />
-          <CustomButton
-            text="Salir"
-            type="button"
-            onClick={exitPage}
-            customDesign={{
-              color: "black",
-              backgroundColor: "red",
-              hoverBackgroundColor: "darkred",
-            }}
-          />
-        </div>
-      </form>
+          <div style={{ paddingTop: "20px", display: "flex", gap: "10px" }}>
+            <CustomButton
+              text="Publicar"
+              type="submit"
+              customDesign={{
+                color: "black",
+                backgroundColor: "green",
+                hoverBackgroundColor: "darkgreen",
+              }}
+            />
+            <CustomButton
+              text="Salir"
+              type="button"
+              onClick={exitPage}
+              customDesign={{
+                color: "black",
+                backgroundColor: "red",
+                hoverBackgroundColor: "darkred",
+              }}
+            />
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

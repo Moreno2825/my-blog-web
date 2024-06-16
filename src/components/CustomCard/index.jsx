@@ -1,29 +1,32 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import FavoriteIcon from "@mui/icons-material/Create";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
+import {
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
+  IconButton,
+  Avatar,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CommentIcon from "@mui/icons-material/Comment";
+import { useSelector } from "react-redux";
+import CommentPubUseCase from "@/application/usecases/pubUseCase/CommentPubUseCase";
+import PubRepo from "@/infraestructure/implementation/httpRequest/axios/PubRepo";
+import { format } from "date-fns";
 
 export default function RecipeReviewCard({
   user,
@@ -32,17 +35,44 @@ export default function RecipeReviewCard({
   comment,
   image,
   id,
-  expanded,
-  onExpandClick,
   isMyPub = false,
 }) {
   const router = useRouter();
-  const handleExpandClick = () => {
-    onExpandClick(id);
-  };
+  const route = useRouter();
+  const [open, setOpen] = useState(false);
+  const userId = useSelector((state) => state.user._id);
+  const [newTask, setNewTask] = useState({
+    comment: "",
+  });
 
   const handleNavigation = () => {
     router.push(`/pubs/${id}/page`);
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handlesubmit = async () => {
+    const commentData = {
+      pubId: id,
+      id_user: userId,
+      comment: newTask.comment,
+    };
+    try {
+      const pubRepo = new PubRepo();
+      const commentPubUseCase = new CommentPubUseCase(pubRepo);
+      await commentPubUseCase.run(commentData);
+      setNewTask({ comment: "" });
+      setOpen(false);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -55,11 +85,6 @@ export default function RecipeReviewCard({
           <Avatar sx={{ bgcolor: "#1a202c" }} aria-label="recipe">
             {user.name.charAt(0)}
           </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings" sx={{ color: "#ffffff" }}>
-            <MoreVertIcon />
-          </IconButton>
         }
         title={title}
         subheader="September 14, 2016"
@@ -78,28 +103,93 @@ export default function RecipeReviewCard({
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {isMyPub && (
-          <IconButton aria-label="add to favorites" onClick={handleNavigation}>
-            <FavoriteIcon />
-          </IconButton>
-        )}
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
+        <div style={{ display: "flex", width: "100%" }}>
+          <div>
+            {isMyPub && (
+              <React.Fragment>
+                <IconButton
+                  aria-label="add to favorites"
+                  onClick={handleNavigation}
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton aria-label="delete" onClick={null}>
+                  <DeleteIcon />
+                </IconButton>
+              </React.Fragment>
+            )}
+          </div>
+          <div style={{ marginLeft: "auto" }}>
+            <IconButton aria-label="comment" onClick={handleClickOpen}>
+              <CommentIcon />
+            </IconButton>
+          </div>
+        </div>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph color={"white"}>
-            Comment:
-          </Typography>
-          <Typography paragraph>{comment}</Typography>
-        </CardContent>
-      </Collapse>
+
+      <div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="form-dialog-title"
+          sx={{ width: "100%" }}
+        >
+          <DialogTitle id="form-dialog-title">Comentarios</DialogTitle>
+          <DialogContent sx={{ width: "500px" }}>
+            <List>
+              {comment.map((comment) => (
+                <ListItem key={comment._id}>
+                  <ListItemText
+                    primary={comment.id_user.name}
+                    secondary={
+                      <>
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {comment.comment}
+                        </Typography>
+                        <div></div>
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                        >
+                          {format(
+                            new Date(comment.createdAt),
+                            "dd/MM/yyyy HH:mm:ss"
+                          )}
+                        </Typography>
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+            <TextField
+              sx={{ borderRadius: "10px", color: "#1a202c" }}
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Escribir comentario"
+              type="text"
+              onChange={(e) => {
+                setNewTask({ ...newTask, comment: e.target.value });
+              }}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handlesubmit} color="primary">
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </Card>
   );
 }

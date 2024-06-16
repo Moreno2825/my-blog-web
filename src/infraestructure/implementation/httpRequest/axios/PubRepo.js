@@ -110,6 +110,19 @@ class PubRepo extends IPubRepo {
       throw error;
     }
   }
+
+  async createComment(data){
+    try {
+      const res = await axios.post(`${this.url}pubs/comment`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+      return res.data;
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
+  }
 }
 
 export default PubRepo;

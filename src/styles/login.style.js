@@ -2,15 +2,18 @@ import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const GridContainer = styled.div`
+  display: flex;
+  background-color: #2d384d;
   width: 100%;
   height: 100vh;
+`;
+
+export const StyledFormContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-`;
-
-export const StyledFormContainer = styled.div`
+  margin: auto;
   height: 430px;
   width: 450px;
   background-color: #e5e6e9;

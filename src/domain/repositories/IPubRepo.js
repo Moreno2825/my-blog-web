@@ -5,5 +5,6 @@ class IPubRepo{
     delete(pub){throw "not implemented";}
     update(id, pub){throw "not implemented";}
     create(pub){throw "not implemented";}
+    createComment(pub){throw "not implemented";}
 }
 export default IPubRepo;

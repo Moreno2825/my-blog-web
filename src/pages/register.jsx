@@ -12,15 +12,10 @@ import { setUser } from "@/actions/userActions";
 import CryptoJS from "crypto-js";
 import Cookies from "js-cookie";
 import BasicAlerts from "@/components/CustomAlert";
-import {
-  Container,
-  EyeIcon,
-  GridContainer,
-  GridForm,
-  StyledFormContainer,
-} from "@/styles/login.style";
+import { Container, GridForm, StyledFormContainer } from "@/styles/login.style";
+import { GridContainer } from "@/styles/index.style";
 
-const Login = () => {
+const Register = () => {
   const route = useRouter();
   const dispatch = useDispatch();
   const [isShowPassword, setShowPassword] = useState(false);
@@ -66,67 +61,73 @@ const Login = () => {
   };
 
   return (
-    <GridContainer>
-      <div
-        style={{
-          display: "flex",
-          position: "absolute",
-          top: "0px",
-          right: "0px",
-          margin: "20px",
-        }}
-      >
-        {errorMessage && (
-          <BasicAlerts severity="error" message={errorMessage} />
-        )}
-      </div>
-      <StyledFormContainer>
-        <h1 style={{ textAlign: "center", color: "#1e2533", fontSize: "24px" }}>
-          Inicie sesión con su cuenta
-        </h1>
-
-        <GridForm onSubmit={handleSubmit(onSubmit)}>
-          <CustomInput
-            label="Correo electronico:"
-            name="email"
-            control={control}
-            fullWidth
-          />
-          <CustomInput
-            label="Contraseña:"
-            name="password"
-            control={control}
-            fullWidth
-            type={isShowPassword ? "text" : "password"}
-            icon={
-              isShowPassword ? (
-                <EyeIcon icon={faEyeSlash} onClick={togglePasswordVisibility} />
-              ) : (
-                <EyeIcon icon={faEye} onClick={togglePasswordVisibility} />
-              )
-            }
-          />
-          <div style={{ paddingTop: "20px" }}>
-            <CustomButton text={"Iniciar Sesion"} type="submit" fullWidth />
-          </div>
-        </GridForm>
+    <Container>
+      <GridContainer>
         <div
           style={{
-            color: "black",
+            paddingBottom: "20px",
             display: "flex",
-            justifyContent: "start",
-            paddingLeft: 23,
-            paddingTop: 15,
+            justifyContent: "flex-end",
           }}
         >
-          No cuentas con una cuenta?{"  "}
-          <a href="/register" style={{ color: "#f27d16" }}>
-            Registrate
-          </a>
+          {errorMessage && (
+            <BasicAlerts severity="error" message={errorMessage} />
+          )}
         </div>
-      </StyledFormContainer>
-    </GridContainer>
+
+        <StyledFormContainer>
+          <h1
+            style={{ textAlign: "center", color: "#1e2533", fontSize: "24px" }}
+          >
+            Inicie sesión con su cuenta
+          </h1>
+
+          <GridForm onSubmit={handleSubmit(onSubmit)}>
+            <CustomInput
+              label="Correo electronico:"
+              name="email"
+              control={control}
+              fullWidth
+            />
+            <CustomInput
+              label="Contraseña:"
+              name="password"
+              control={control}
+              fullWidth
+              type={isShowPassword ? "text" : "password"}
+              icon={
+                isShowPassword ? (
+                  <EyeIcon
+                    icon={faEyeSlash}
+                    onClick={togglePasswordVisibility}
+                  />
+                ) : (
+                  <EyeIcon icon={faEye} onClick={togglePasswordVisibility} />
+                )
+              }
+            />
+            <div style={{ paddingTop: "20px" }}>
+              <CustomButton text={"Iniciar Sesion"} type="submit" fullWidth />
+            </div>
+          </GridForm>
+          <div
+            style={{
+              color: "black",
+              display: "flex",
+              justifyContent: "start",
+              paddingLeft: 23,
+              paddingTop: 15,
+            }}
+          >
+            No cuentas con una cuenta?{"  "}
+            <a href="/register" style={{ color: "#f27d16" }}>
+              Registrate
+            </a>
+          </div>
+        </StyledFormContainer>
+      </GridContainer>
+    </Container>
   );
 };
 
-export default Login;
+export default Register;

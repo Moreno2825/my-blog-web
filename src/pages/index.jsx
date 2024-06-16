@@ -5,12 +5,14 @@ import RecipeReviewCard from "@/components/CustomCard";
 import PubRepo from "@/infraestructure/implementation/httpRequest/axios/PubRepo";
 import CustomButton from "@/components/CustomButton";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 
 export default function Home() {
   const [pubs, setPubs] = useState([]);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const userId = useSelector((state) => state.user._id);
 
   const pubRepo = new PubRepo();
   const getAllOrderUseCase = new GetAllPubUseCase(pubRepo);
