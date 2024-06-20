@@ -45,7 +45,7 @@ export default function Mypub() {
             justifyContent: "space-between",
           }}
         >
-          <h1>{userId ? "Iniciar Sesión para ver tus publicaciones" : "Publicaciones"}</h1>
+          <h1>{userId ? "Publicaciones" : "Iniciar Sesión para ver tus publicaciones"}</h1>
           <div>
             <CustomButton
               text={"Publicar"}

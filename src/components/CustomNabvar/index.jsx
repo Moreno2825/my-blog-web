@@ -1,30 +1,39 @@
-import * as React from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
+import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
+import Container from "@mui/material/Container";
 import AdbIcon from "@mui/icons-material/Adb";
+import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
+import { resetUser } from "@/actions/userActions";
 
+// Define your pages and settings
 const pages = [
   { name: "Publicaciones", href: "/" },
   { name: "Mis Publicaciones", href: "/mypub" },
-];
-const settings = [
-  { name: "Cerrar Sesión", href: "/login" },
 ];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const userId = useSelector((state) => state.user._id);
+  const name = useSelector((state) => state.user.name);
+
+  const settings = userId
+    ? [{ name: "Cerrar Sesión", href: "/login" }]
+    : [{ name: "Iniciar Sesión", href: "/login" }];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -40,6 +49,17 @@ function ResponsiveAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    dispatch(resetUser());
+    handleCloseUserMenu();
+    router.push("/login");
+  };
+
+  const handleLogin = () => {
+    router.push("/login");
   };
 
   return (
@@ -139,7 +159,9 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar aria-label="recipe">
+                  {name ? name.charAt(0) : "?"}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -159,11 +181,16 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <Link href={setting.href} passHref key={setting.name}>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting.name}</Typography>
-                  </MenuItem>
-                </Link>
+                <MenuItem
+                  key={setting.name}
+                  onClick={
+                    setting.name === "Cerrar Sesión"
+                      ? handleLogout
+                      : handleLogin
+                  }
+                >
+                  <Typography textAlign="center">{setting.name}</Typography>
+                </MenuItem>
               ))}
             </Menu>
           </Box>

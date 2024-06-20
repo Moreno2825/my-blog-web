@@ -77,7 +77,7 @@ export default function RecipeReviewCard({
 
   return (
     <Card
-      sx={{ maxWidth: 345, backgroundColor: "#d1d9e6", borderRadius: "10px" }}
+      sx={{ maxWidth: 450, backgroundColor: "#d1d9e6", borderRadius: "10px" }}
     >
       <CardHeader
         sx={{ color: "#ffffff", backgroundColor: "#455e84" }}
@@ -112,9 +112,6 @@ export default function RecipeReviewCard({
                   onClick={handleNavigation}
                 >
                   <EditIcon />
-                </IconButton>
-                <IconButton aria-label="delete" onClick={null}>
-                  <DeleteIcon />
                 </IconButton>
               </React.Fragment>
             )}

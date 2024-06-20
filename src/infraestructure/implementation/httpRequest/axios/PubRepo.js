@@ -76,11 +76,14 @@ class PubRepo extends IPubRepo {
     }
   }
 
-  async delete(id) {
+  async delete(id, userId) {
     try {
-      const response = await axios.delete(`${this.url}/${id}`, {
+      const response = await axios.delete(`${this.url}pubs/delete/${id}`, {
         headers: {
           "Content-Type": "application/json",
+        },
+        data: {
+          userId: userId,
         },
       });
 
@@ -91,7 +94,7 @@ class PubRepo extends IPubRepo {
     }
   }
 
-  async update(id ,pub) {
+  async update(id, pub) {
     try {
       const formData = new FormData();
       formData.append("id_user", pub.id_user);
@@ -111,13 +114,13 @@ class PubRepo extends IPubRepo {
     }
   }
 
-  async createComment(data){
+  async createComment(data) {
     try {
       const res = await axios.post(`${this.url}pubs/comment`, data, {
         headers: {
           "Content-Type": "application/json",
-        }
-      })
+        },
+      });
       return res.data;
     } catch (error) {
       console.log("Error:", error.message);

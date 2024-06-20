@@ -9,18 +9,17 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "SET_USER":
-      const newState = {
-        ...state,
-        ...action.payload,
-      };
-
-      localStorage.setItem("user", JSON.stringify(newState));
-
-      return newState;
-    default:
-      return state;
+      case 'SET_USER':
+          const newState = {
+              ...state,
+              ...action.payload,
+          };
+          localStorage.setItem('user', JSON.stringify(newState));
+          return newState;
+      case 'RESET_USER':
+          return initialState;
+      default:
+          return state;
   }
 };
-
 export default userReducer;

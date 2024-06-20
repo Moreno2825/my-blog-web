@@ -46,18 +46,21 @@ export default function Home() {
           }}
         >
           <h1>Publicaciones de todos los usuarios</h1>
-          <div>
-            <CustomButton
-              text={"Publicar"}
-              type="button"
-              customDesign={{
-                color: "black",
-                backgroundColor: "green",
-                hoverBackgroundColor: "darkgreen",
-              }}
-              onClick={() => router.push("/pubs/new/page")}
-            />
-          </div>
+
+          {userId && (
+            <div>
+              <CustomButton
+                text={"Publicar"}
+                type="button"
+                customDesign={{
+                  color: "black",
+                  backgroundColor: "green",
+                  hoverBackgroundColor: "darkgreen",
+                }}
+                onClick={() => router.push("/pubs/new/page")}
+              />
+            </div>
+          )}
         </div>
         {isLoading ? (
           <p>Loading...</p>
